@@ -16,8 +16,12 @@ An interactive SVG heart inspired by the Quran, built using pure HTML, CSS, and 
 - SVG
 
 ## 📂 Project Structure
+├── heart.svg
+
 ├── index.html
+
 ├── style.css
+
 └── script.js
 
 
