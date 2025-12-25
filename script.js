@@ -6,14 +6,63 @@ fetch('./heart.svg')
 
     const groups = container.querySelectorAll('.section-group');
 
+    // Memorization level state
+    let currentLevel = null;
+
+    // Level button elements
+    const levelButtons = {
+      good: document.getElementById('level-good'),
+      middle: document.getElementById('level-middle'),
+      weak: document.getElementById('level-weak')
+    };
+
+    // Level button click handlers
+    Object.keys(levelButtons).forEach(level => {
+      levelButtons[level].addEventListener('click', () => {
+        // Toggle selection
+        if (currentLevel === level) {
+          currentLevel = null;
+          levelButtons[level].classList.remove('active');
+        } else {
+          // Deactivate all buttons
+          Object.values(levelButtons).forEach(btn => btn.classList.remove('active'));
+          // Activate selected button
+          currentLevel = level;
+          levelButtons[level].classList.add('active');
+        }
+      });
+    });
+
+    // Section click handler
     groups.forEach(group => {
       group.addEventListener('click', () => {
         const paths = group.querySelectorAll('.section');
-        const isActive = paths[0].classList.contains('active');
 
-        paths.forEach(p => {
-          p.classList.toggle('active', !isActive);
-        });
+        if (currentLevel) {
+          // Apply memorization level
+          const hasLevel = paths[0].classList.contains(`level-${currentLevel}`);
+
+          paths.forEach(p => {
+            // Remove all level classes
+            p.classList.remove('level-good', 'level-middle', 'level-weak', 'active');
+
+            // If clicking the same level, remove it (toggle off)
+            // Otherwise, apply the new level
+            if (!hasLevel) {
+              p.classList.add(`level-${currentLevel}`);
+            }
+          });
+        } else {
+          // No level selected - toggle the old active state (red color)
+          const isActive = paths[0].classList.contains('active');
+
+          paths.forEach(p => {
+            // Remove all level classes first
+            p.classList.remove('level-good', 'level-middle', 'level-weak');
+            // Toggle active
+            p.classList.toggle('active', !isActive);
+          });
+        }
       });
     });
 
@@ -79,6 +128,15 @@ fetch('./heart.svg')
         .section.active {
           fill: #e63946;
         }
+        .section.level-good {
+          fill: #4caf50 !important;
+        }
+        .section.level-middle {
+          fill: #ffc107 !important;
+        }
+        .section.level-weak {
+          fill: #f44336 !important;
+        }
         .section-text {
           fill: #000000;
           font-size: 14px;
@@ -88,6 +146,11 @@ fetch('./heart.svg')
           transition: fill 0.25s ease;
         }
         .section.active + .section-text {
+          fill: #ffffff;
+        }
+        .section.level-good + .section-text,
+        .section.level-middle + .section-text,
+        .section.level-weak + .section-text {
           fill: #ffffff;
         }
       `;
